@@ -492,7 +492,7 @@
       apiKey: "AIzaSyBIwFkD276EiMjQMetdgiSGYTWkL_Ml5pM",
       authDomain: "classe-1469e.firebaseapp.com",
       projectId: "classe-1469e",
-      storageBucket: "classe-1469e.firebasestorage.app",
+      storageBucket: "classe-1469e.appspot.com",
       messagingSenderId: "463210643481",
       appId: "1:463210643481:web:ec8a863166d5d44d582a88"
     };
@@ -587,8 +587,9 @@
 
         messagesArray.forEach(message => {
           const normalizedRecipient = normalizeName(message.recipient);
+          const normalizedSearch = normalizeName(searchTerm);
 
-          if (searchTerm && !normalizedRecipient.includes(normalizeName(searchTerm))) {
+          if (searchTerm && !normalizedRecipient.includes(normalizedSearch)) {
             return;
           }
 
@@ -654,9 +655,25 @@
     }
 
     function returnToWelcome() {
+      // Réinitialiser l'affichage
       mainContainer.style.display = 'none';
       welcomeScreen.style.display = 'flex';
       welcomeScreen.style.opacity = '1';
+      
+      // Réinitialiser les animations
+      const welcomeMessage = welcomeScreen.querySelector('.welcome-message');
+      const welcomeButtons = welcomeScreen.querySelector('.welcome-buttons');
+      
+      welcomeMessage.style.animation = 'none';
+      welcomeButtons.style.animation = 'none';
+      
+      // Forcer le recalcul des styles pour réinitialiser l'animation
+      void welcomeMessage.offsetWidth;
+      void welcomeButtons.offsetWidth;
+      
+      // Réappliquer les animations
+      welcomeMessage.style.animation = 'fadeInUp 1s forwards 0.5s';
+      welcomeButtons.style.animation = 'fadeInUp 1s forwards 1s';
     }
 
     // Événements
@@ -729,10 +746,8 @@
       loadMessages(searchInput.value);
     });
 
-    searchInput.addEventListener('keyup', e => {
-      if (e.key === 'Enter') {
-        loadMessages(searchInput.value);
-      }
+    searchInput.addEventListener('input', () => {
+      loadMessages(searchInput.value);
     });
 
     // Changement de thème
@@ -743,8 +758,8 @@
     document.documentElement.setAttribute('data-theme', savedTheme);
 
     // Mettre à jour l'icône selon le thème
-    // const icon = themeToggle.querySelector('i');
-    if (savedTheme === 'night') {
+    const icon = themeToggle.querySelector('i');
+    if (savedTheme === 'light') {
       icon.classList.remove('fa-moon');
       icon.classList.add('fa-sun');
     }
